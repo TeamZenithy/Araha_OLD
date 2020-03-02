@@ -1,6 +1,5 @@
 const Model = require('./model')
 const SmallRichEmbed = require('../utils/embed.js')
-const Player = require('../instances/player')
 
 module.exports = class LoopQueue extends Model {
   constructor () {
@@ -16,7 +15,7 @@ module.exports = class LoopQueue extends Model {
 
   async run (pkg) {
     const Embed = new SmallRichEmbed()
-    const player = Player.playerInstance(pkg.client, pkg.msg.guild.id)
+    const player = pkg.client.m.get(pkg.msg.guild.id)
     const { queue } = player
 
     if (this.voiceChannel && !pkg.msg.member.voiceChannel) {
@@ -25,7 +24,7 @@ module.exports = class LoopQueue extends Model {
       return pkg.msg.channel.send(Embed.get())
     }
 
-    if (!player.player || queue.empty) {
+    if (!player.connection || queue.isLast) {
       Embed.addField(
         pkg.lang.get('cmd_warning'),
         pkg.lang.get('no_music_playing')

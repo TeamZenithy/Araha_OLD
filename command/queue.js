@@ -1,7 +1,5 @@
 const Model = require('./model')
 const SmallRichEmbed = require('../utils/embed.js')
-const Player = require('../instances/player')
-const Music = require('../instances/music')
 
 module.exports = class Queue extends Model {
   constructor () {
@@ -25,7 +23,7 @@ module.exports = class Queue extends Model {
       return pkg.msg.channel.send(Embed.get())
     }
 
-    const player = Player.playerInstance(pkg.client, pkg.msg.guild.id)
+    const player = pkg.client.m.get(pkg.msg.guild.id)
     const { queue } = player
     if (this.voiceChannel && !pkg.msg.member.voiceChannel) {
       Embed.addField(pkg.lang.get('cmd_warning'), pkg.lang.get('use_in_voice'))
@@ -33,7 +31,7 @@ module.exports = class Queue extends Model {
       return pkg.msg.channel.send(Embed.get())
     }
 
-    if (!player.player || queue.empty) {
+    if (!player.connection || queue.isLast) {
       Embed.addField(
         pkg.lang.get('cmd_warning'),
         pkg.lang.get('no_music_playing')
@@ -42,7 +40,7 @@ module.exports = class Queue extends Model {
       return pkg.msg.channel.send(Embed.get())
     }
 
-    const part = queue.part((parseInt(page) - 1) * 5, parseInt(page) * 5)
+    const part = queue.slice((parseInt(page) - 1) * 5, (parseInt(page) * 5) + 1)
     if (!part.length) {
       Embed.addField(pkg.lang.get('cmd_warning'), pkg.lang.get('invalid_page'))
       Embed.setColor(14217046)
@@ -65,10 +63,12 @@ module.exports = class Queue extends Model {
     > ${pkg.lang.get('queue_queued_songs')}:
     ${part
     .slice(1)
-    .map(({ info }) => `\`${temp_++}.\` ${Queue.formatSong(info)}`)
+    .map(({ info }) => `\`${temp_++}.\` ${`[${info.title}](${info.uri}) | \`${
+      info.isStream ? pkg.lang.get('streaming') : player.toSongDuration(info.length)
+    }\``}`)
     .join('\n')}
-    ${pkg.lang.get('queue_deatil', [queue.queue.length - 1]) +
-      `${Music.toSongDuration(queue.totalLength)}**`}
+    ${pkg.lang.get('queue_deatil', [queue.length - 1]) +
+      `${player.toSongDuration(queue.totalLength)}**`}
     `
     }
 
@@ -76,16 +76,12 @@ module.exports = class Queue extends Model {
       pkg.lang.get('queue'),
       `
     > ${pkg.lang.get('queue_playing')}:
-    ${Queue.formatSong(queue.first.info, pkg)}
+    ${`[${queue[0].info.title}](${queue[0].info.uri}) | \`${
+      queue[0].info.isStream ? pkg.lang.get('streaming') : player.toSongDuration(queue[0].info.length)
+    }\``}
     ${songFormated}
         `
     )
     pkg.msg.channel.send(Embed.get())
-  }
-
-  static formatSong ({ length, title, uri, isStream }, pkg) {
-    return `[${title}](${uri}) | \`${
-      isStream ? pkg.lang.get('streaming') : Music.toSongDuration(length)
-    }\``
   }
 }

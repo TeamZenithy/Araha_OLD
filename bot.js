@@ -6,16 +6,16 @@ const MySQL = require('mysql2/promise')
 
 const config = require('./data/config')
 const logger = require('./utils/logger')
+const MusicGuilds = require('./instances/guilds')
+const MusicSearcher = require('./instances/searcher')
 
 class Araha extends Discord.Client {
   constructor(_config) {
     super()
     this.config = _config
     this.commands = new Map()
-    this.players = new Map()
     this.logger = logger
     this.languages = new UlangTS(require('./lang'))
-    //this.ready = false // 봇이 준비되기 전에 다른 이벤트가 진행이 되어 오류가 발생 하는 것을 막는 변수
     this.db
 
     this.on('debug', async debugInfo => {
@@ -52,6 +52,9 @@ class Araha extends Discord.Client {
           shards: 0
         }
       )
+
+      this.m = new MusicGuilds(this.player)
+      this.searcher = new MusicSearcher(config.lavalink)
 
       setInterval(() => {
         this.db.query('SELECT 1')

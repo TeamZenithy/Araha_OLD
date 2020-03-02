@@ -1,0 +1,5 @@
+module.exports.Player = require('./player')
+module.exports.Queue = requier('./queue')
+module.exports.Searcher = require('./searcher')
+module.exports.Guild = require('./guild')
+module.exports.Guilds = requie('./guilds')

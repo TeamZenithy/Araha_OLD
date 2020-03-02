@@ -16,7 +16,7 @@ module.exports = class Skip extends Model {
 
   async run (pkg) {
     const Embed = new SmallRichEmbed()
-    const player = Player.playerInstance(pkg.client, pkg.msg.guild.id)
+    const player = pkg.client.m.get(pkg.msg.guild.id)
     const { queue } = player
 
     if (this.voiceChannel && !pkg.msg.member.voiceChannel) {
@@ -25,7 +25,7 @@ module.exports = class Skip extends Model {
       return pkg.msg.channel.send(Embed.get())
     }
 
-    if (!player.player || queue.empty) {
+    if (!player.connection || queue.isLast) {
       Embed.addField(
         pkg.lang.get('cmd_warning'),
         pkg.lang.get('no_music_playing')
@@ -37,7 +37,7 @@ module.exports = class Skip extends Model {
     player.skip()
     Embed.addField(
       pkg.lang.get('cmd_success'),
-      `${pkg.lang.get('skipped')}: **${player.nowPlaying.info.title}**`
+      `${pkg.lang.get('skipped')}: **${queue[0].info.title}**`
     )
     pkg.msg.channel.send(Embed.get())
   }

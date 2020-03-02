@@ -1,6 +1,5 @@
 const Model = require('./model')
 const SmallRichEmbed = require('../utils/embed.js')
-const Player = require('../instances/player')
 
 module.exports = class Connect extends Model {
   constructor () {
@@ -14,7 +13,7 @@ module.exports = class Connect extends Model {
     })
   }
 
-  async run (pkg) {
+  run (pkg) {
     const Embed = new SmallRichEmbed()
     if (this.voiceChannel && !pkg.msg.member.voiceChannel) {
       Embed.addField(pkg.lang.get('cmd_warning'), pkg.lang.get('use_in_voice'))
@@ -22,8 +21,8 @@ module.exports = class Connect extends Model {
       return pkg.msg.channel.send(Embed.get())
     }
 
-    const player = Player.playerInstance(pkg.client, pkg.msg.guild.id)
-    await player.join(pkg.msg.guild.id, pkg.msg.member.voiceChannel.id)
+    const player = pkg.client.m.get(pkg.msg.guild.id)
+    player.join(pkg.msg.member.voiceChannel.id)
     pkg.client.logger.info(`Joined voice channel: ${pkg.msg.member.voiceChannel.id}`)
 
     Embed.addField(

@@ -1,7 +1,5 @@
 const Model = require('./model')
 const SmallRichEmbed = require('../utils/embed.js')
-const Player = require('../instances/player')
-const Music = require('../instances/music')
 
 module.exports = class Play extends Model {
   constructor () {
@@ -17,7 +15,7 @@ module.exports = class Play extends Model {
 
   async run (pkg) {
     const Embed = new SmallRichEmbed()
-    const player = Player.playerInstance(pkg.client, pkg.msg.guild.id)
+    const player = pkg.client.m.get(pkg.msg.guild.id)
 
     if (!pkg.args.length) {
       Embed.addField(pkg.lang.get('cmd_warning'), pkg.lang.get('cannot_play'))
@@ -31,7 +29,7 @@ module.exports = class Play extends Model {
       return pkg.msg.channel.send(Embed.get())
     }
 
-    await player.join(pkg.msg.guild.id, pkg.msg.member.voiceChannel.id)
+    await player.join(pkg.msg.member.voiceChannel.id)
     const { queue } = player
     const search = pkg.args.join(' ')
 
@@ -41,8 +39,7 @@ module.exports = class Play extends Model {
     )
     pkg.msg.channel.send(Embed.get())
     
-    const music = new Music(pkg.client)
-    const searchResult = await music.findSongs(search).catch(err => {
+    const searchResult = await pkg.client.searcher.fetch(search).catch(err => {
       player.stop()
       Embed.init()
       Embed.setColor(14217046)
@@ -51,10 +48,10 @@ module.exports = class Play extends Model {
     })
     const track = searchResult.tracks[0]
     try {
-      await player.join(pkg.msg.guild.id, pkg.msg.member.voiceChannel.id)
+      await player.join(pkg.msg.member.voiceChannel.id)
       if (searchResult.loadType == 'PLAYLIST_LOADED') {
         await searchResult.tracks.forEach(function(temp) {
-          player.play(temp, pkg.msg.author)
+          player.queue.push(temp)
         }) 
       } else if (searchResult.loadType == 'LOAD_FAILED') {
         Embed.init()
@@ -67,32 +64,34 @@ module.exports = class Play extends Model {
         Embed.setColor(14217046)
         return pkg.msg.channel.send(Embed.get())
       } else {
-        await player.play(track, pkg.msg.author)
+        await player.queue.push(track)
       }
 
+      player.player.start()
+
     const { identifier, length, isStream, title, uri } = track.info
-    if (queue.queue.length > 1) {
+    if (queue.length > 1) {
       const Embed = new SmallRichEmbed()
       Embed.setUrl(pkg.lang.get('added_', [title]), `${uri}`)
       Embed.addField(
         pkg.lang.get('length'),
         `${
-          isStream ? pkg.lang.get('streaming') : Music.toSongDuration(length)
+          isStream ? pkg.lang.get('streaming') : player.toSongDuration(length)
         }`,
         true
       )
-      if (!isNaN(queue.totalLength - length - player.currentSeek)) {
+      if (!isNaN(queue.totalLength - length)) {
         Embed.addField(
           pkg.lang.get('time_to_play'),
-          queue.includesLiveStream
+          queue.some(s => s.info.isStream)
             ? pkg.lang.get('queue_including_streaming')
-            : Music.toSongDuration(
-              queue.totalLength - length - player.currentSeek
+            : player.toSongDuration(
+              queue.totalLength - length
             ),
           true
         )
       }
-      Embed.addField(pkg.lang.get('queue_length'), `${queue.queue.length - 1}`, true)
+      Embed.addField(pkg.lang.get('queue_length'), `${queue.length - 1}`, true)
 
       Embed.setThumbnail(`https://img.youtube.com/vi/${identifier}/default.jpg`)
       return pkg.msg.channel.send(Embed.get())
@@ -103,7 +102,7 @@ module.exports = class Play extends Model {
       Embed.addField(
         pkg.lang.get('length'),
         `${
-          isStream ? pkg.lang.get('streaming') : Music.toSongDuration(length)
+          isStream ? pkg.lang.get('streaming') : player.toSongDuration(length)
         }`,
         true
       )
@@ -112,6 +111,7 @@ module.exports = class Play extends Model {
       return pkg.msg.channel.send(Embed.get())
     }
   } catch (e) {
+      throw(e)
       player.stop()
       Embed.init()
       Embed.setColor(14217046)
