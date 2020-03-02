@@ -1,2 +1,2 @@
 # Araha
- A powerfull music Discord Bot. Made with ❤ in :flag_kr:
+ A powerfull music Discord Bot. Made with ❤ in Korea
