@@ -1,0 +1,43 @@
+{
+  "name": "araha",
+  "version": "1.2.2_S",
+  "description": "A powerfull music Discord Bot. Made with ❤ in :flag_kr:",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"I'm here!\"",
+    "start": "node index.js"
+  },
+  "repository": "git+https://github.com/TeamZenithy/Araha.git",
+  "keywords": [
+    "Discord",
+    "Bot",
+    "Music",
+    "Araha"
+  ],
+  "author": "TanzenT-Lab",
+  "license": "GPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/TeamZenithy/Araha/issues"
+  },
+  "homepage": "https://github.com/TeamZenithy/Araha#readme",
+  "dependencies": {
+    "date-utils": "^1.2.21",
+    "discord.js": "^11.5.1",
+    "discord.js-lavalink": "^2.2.3",
+    "enmap": "^5.1.2",
+    "mysql2": "^2.1.0",
+    "node-fetch": "^2.6.0",
+    "percent": "^2.0.0",
+    "time-convert": "0.0.2",
+    "ulangts": "^1.0.4",
+    "umysql": "^0.1.1",
+    "uuniquets": "^1.0.0",
+    "winston": "^3.2.1",
+    "winston-daily-rotate-file": "^4.4.0",
+    "winston-discord": "^0.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.6.0"
+  },
+  "private": false
+}

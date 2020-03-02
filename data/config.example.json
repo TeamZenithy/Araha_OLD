@@ -1,0 +1,34 @@
+{
+    "bot":{
+        "token" : "YOUR_DISCORD_BOT_TOKEN_HERE",
+        "prefix" : "/",
+        "candidate": "Unstable",
+        "version": "0.0.1",
+        "permission": 8,
+        "color": 10092390,
+        "name": "YOUR_BOT_NAME_HERE",
+        "shard":{
+            "respawn": true,
+            "count": "auto",
+            "delay": 7500
+        }
+    },
+    "db":{
+        "host": "YOUR_DB_HOST_HERE",
+        "id": "YOUR_DB_USER_HERE",
+        "pw": "YOUR_DB_PASS_HERE",
+        "schema": "YOUR_DB_SCHEMA_HERE"
+    },
+    "owners" : ["OWNER_ID"],
+    "lavalink":[
+        {
+            "host": "YOUR_LAVALINK_HOST",
+            "port": 2333,
+            "pw": "YOUR_LAVALINK_PASSWORD"
+        }
+    ],
+    "logger": {
+        "log_webhook": "YOUR_LOG_CHANNEL_WEBHOOK",
+        "level": "silly"
+    }
+}
