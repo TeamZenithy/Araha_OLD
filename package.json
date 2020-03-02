@@ -1,7 +1,7 @@
 {
   "name": "araha",
   "version": "1.2.2_S",
-  "description": "A powerfull music Discord Bot. Made with ❤ in Korea",
+  "description": "A powerful music Discord Bot. Made with ❤ in Korea",
   "main": "index.js",
   "scripts": {
     "test": "echo \"I'm here!\"",
