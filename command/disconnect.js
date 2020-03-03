@@ -1,6 +1,5 @@
 const Model = require('./model')
 const SmallRichEmbed = require('../utils/embed.js')
-const Player = require('../instances/player')
 
 module.exports = class Disconnect extends Model {
   constructor () {
@@ -22,11 +21,11 @@ module.exports = class Disconnect extends Model {
       return pkg.msg.channel.send(Embed.get())
     }
 
-    const player = Player.playerInstance(pkg.client, pkg.msg.guild.id)
+    const player = pkg.client.m.get(pkg.msg.guild.id)
     player.loop = false
     player.loopQueue = false
     player.stop()
-    await player.disconnect(pkg.msg.guild.id, pkg.msg.member.voiceChannel.id)
+    player.disconnect()
     pkg.msg.member.voiceChannel.leave()
 
     Embed.addField(
