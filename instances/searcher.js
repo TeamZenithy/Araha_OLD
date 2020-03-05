@@ -1,9 +1,9 @@
 const fetch = require('node-fetch')
 class LavalinkSearcher {
   constructor(lavalink) {
-    this.host = lavalink.host
-    this.port = lavalink.port
-    this.pass = lavalink.pw
+    this.host = lavalink[0].host
+    this.port = lavalink[0].port
+    this.pass = lavalink[0].pw
   }
 
   fetch (query) {

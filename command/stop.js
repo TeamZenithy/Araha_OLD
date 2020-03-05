@@ -1,6 +1,5 @@
 const Model = require('./model')
 const SmallRichEmbed = require('../utils/embed.js')
-const Player = require('../instances/player')
 
 module.exports = class Stop extends Model {
   constructor () {

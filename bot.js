@@ -34,17 +34,15 @@ class Araha extends Discord.Client {
 
       const activitiesList = [
         `${this.guilds.size} Servers | ${this.config.bot.prefix}help`,
-        `Shard ID:${this.shard.id} | ${this.config.bot.prefix}help`,
         `${this.config.bot.candidate} v.${this.config.bot.version} | ${this.config.bot.prefix}help`,
-        `${this.shard.count} Shards | ${this.config.bot.prefix}help`
       ]
       this.player = new PlayerManager(
         this,
         [
           {
-            host: config.lavalink.host,
-            port: config.lavalink.port,
-            password: config.lavalink.pw
+            host: config.lavalink[0].host,
+            port: config.lavalink[0].port,
+            password: config.lavalink[0].pw
           }
         ],
         {
@@ -68,7 +66,6 @@ class Araha extends Discord.Client {
 Bot id: ${this.user.id}
 Bot Name: ${this.user.username}
 Invite URL: https://discordapp.com/api/oauth2/authorize?client_id=${this.user.id}&permissions=${this.config.bot.permission}&scope=bot
-Shard id: ${this.shard.id}
       `)
     })
 
