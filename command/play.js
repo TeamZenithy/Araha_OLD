@@ -1,5 +1,6 @@
 const Model = require('./model')
 const SmallRichEmbed = require('../utils/embed.js')
+const urlRegExp = new RegExp(/http(s|):\/\//gi)
 
 module.exports = class Play extends Model {
   constructor () {
@@ -39,18 +40,23 @@ module.exports = class Play extends Model {
     )
     pkg.msg.channel.send(Embed.get())
     
-    const searchResult = await pkg.client.searcher.fetch(search).catch(err => {
+    const searchResult = await pkg.client.searcher.fetch(
+      urlRegExp.test(search)
+        ? search
+        : `ytsearch: ${search}`
+    ).catch(err => {
       player.stop()
       Embed.init()
       Embed.setColor(14217046)
       Embed.addField(pkg.lang.get('cmd_warning'), pkg.lang.get('err_loading_track', [err]))
       return pkg.msg.channel.send(Embed.get())
     })
+
     const track = searchResult.tracks[0]
     try {
       await player.join(pkg.msg.member.voiceChannel.id)
       if (searchResult.loadType == 'PLAYLIST_LOADED') {
-        await searchResult.tracks.forEach(function(temp) {
+        await searchResult.tracks.forEach(temp => {
           player.queue.push(temp)
         }) 
       } else if (searchResult.loadType == 'LOAD_FAILED') {
@@ -111,7 +117,6 @@ module.exports = class Play extends Model {
       return pkg.msg.channel.send(Embed.get())
     }
   } catch (e) {
-      throw(e)
       player.stop()
       Embed.init()
       Embed.setColor(14217046)

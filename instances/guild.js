@@ -26,7 +26,7 @@ class LavalinkServer {
     this.connection = await this.manager.join({
       guild: this.guild,
       channel: voiceChannel,
-      host: this.manager.client.config.lavalink.host
+      host: this.manager.client.config.lavalink[0].host
     })
 
     return true
@@ -41,7 +41,7 @@ class LavalinkServer {
 
   setVolume (vol) {
     if (!vol || isNaN(vol)) return
-    this.connection.setVolume((this.vol = vol))
+    this.connection.volume(this.vol = vol)
     return vol
   }
 
@@ -73,10 +73,10 @@ class LavalinkServer {
     return this.connection.paused
   }
 
-  seek (s, m, h) {
+  seek (s, m = 0, h = 0) {
     if (isNaN(s) || isNaN(m) || isNaN(h)) return
     const time = (s * 1000) + (m * 60 * 1000) + (h * 60 * 60 * 1000)
-    this.player.seek(time)
+    this.connection.seek(time)
     return format(s, m, h)
   }
 
